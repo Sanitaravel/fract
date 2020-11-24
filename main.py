@@ -1,35 +1,26 @@
-import turtle
-import svgwrite
-
-size = 300
-points = []
+from itertools import groupby
 
 
-def koch_curve(size, n):
-    points.append(turtle.pos())
+def gen_next(arr, n):
     if n == 0:
-        turtle.forward(size)
+        return arr
     else:
-        koch_curve(size / 3, n - 1)
-        turtle.left(60)
-        koch_curve(size / 3, n - 1)
-        turtle.right(120)
-        koch_curve(size / 3, n - 1)
-        turtle.left(60)
-        koch_curve(size / 3, n - 1)
+        tmp = []
+        x = groupby(arr)
+        for key, group_items in x:
+            tmp.append(sum(1 for x in group_items))
+            tmp.append(key)
+        return gen_next(tmp, n-1)
 
 
 def main():
-    n = int(input("Input iteration value: "))
-    koch_curve(size, n)
+    arr = [1]
 
-    dwg = svgwrite.Drawing('koch.svg', profile='tiny')
-    for i in range(len(points) - 1):
-        a, b = points[i], points[i + 1]
-        a[1] += 100
-        b[1] += 100
-        dwg.add(dwg.line(a, b, stroke=svgwrite.rgb(0, 0, 0, '%')))
-    dwg.save()
+    n = int(input("Input number of iteration: "))
+
+    ans = gen_next(arr, n-1)
+    for i in ans:
+        print(i, end='')
 
 
 if __name__ == '__main__':
